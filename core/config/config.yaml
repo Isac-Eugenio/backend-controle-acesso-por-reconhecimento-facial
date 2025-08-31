@@ -1,24 +1,24 @@
 # Seção de hosts IP ou nomes de máquinas no sistema
 hosts:
-  camera: "192.168.0.20"   # IP do servidor/câmera
-  database: "localhost"    # IP ou hostname do banco de dados
+  camera: "<a IP da câmera ou servidor>"   # IP do servidor/câmera
+  database: "<a IP ou hostname do banco de dados>"    # IP ou hostname do banco de dados
 
 # Seção de portas utilizadas pelos serviços
 ports:
-  camera: 80               # Porta HTTP da câmera
-  database: 3306           # Porta padrão do MySQL/MariaDB
+  camera: "<a porta HTTP da câmera>"               # Porta HTTP da câmera
+  database: "<a porta do MySQL/MariaDB>"          # Porta padrão do MySQL/MariaDB
 
 # Credenciais de acesso aos serviços
 credentials:
   database:
-    user: "root"           # Usuário do banco de dados (mesma do docker-compose)
-    password: "@Isac1998"  # Senha do banco de dados (mesma do docker-compose)
-    name: "debug"          # Nome do banco de dados a ser usado (mesmo do docker-compose)
+    user: "<a usuário do SGBD>"           # Usuário do banco de dados (mesma do docker-compose)
+    password: "<a senha do SGBD>"         # Senha do banco de dados (mesma do docker-compose)
+    name: "<a nome do banco de dados>"    # Nome do banco de dados a ser usado (mesmo do docker-compose)
 
 # Detalhes adicionais sobre o banco de dados
 details:
   database:
     tables:
-      perfis: "usuarios"         # Nome da tabela de perfis/usuários
-      historico: "historico"   # Nome da tabela de histórico de acessos
-      dispositivos: "dispositivos" # Nome da tabela de dispositivos
+      perfis: "<a nome da tabela de perfis/usuários>"         # Nome da tabela de perfis/usuários
+      historico: "<a nome da tabela de histórico de acessos>" # Nome da tabela de histórico de acessos
+      dispositivos: "<a nome da tabela de dispositivos>"     # Nome da tabela de dispositivos
