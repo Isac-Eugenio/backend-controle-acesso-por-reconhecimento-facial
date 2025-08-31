@@ -137,8 +137,6 @@ sudo nano docker-compose.yml
 * Aperte `Ctrl+O` para salvar as modificações
 * Aperte `Ctrl+X` para fechar o editor e voltar ao terminal
 
----
-
 ##### 🛠️ Arquivo de configuração da aplicação (`config.yaml`):
 
 1. Vá até o diretório **`core/config`** e edite o arquivo de configuração:
