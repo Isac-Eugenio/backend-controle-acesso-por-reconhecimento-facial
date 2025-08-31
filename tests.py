@@ -80,8 +80,8 @@ async def teste_async():
 
 
 def debug():
-    print(len(ApiUtils.generate_128_repeated_floats(2).split(",")))
+    print(ApiUtils._hash_sha256("admin123"))
 
 
 if __name__ == "__main__":
-    asyncio.run(teste_async())
+    debug()

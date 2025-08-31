@@ -76,14 +76,51 @@ Aqui está a versão revisada e reorganizada do seu trecho do README.md:
 
 ---
 
+Perfeito! Podemos adicionar instruções **antes da configuração dos arquivos**, orientando o usuário a editar o `init.sql` e ajustar as flags `<adicione o nome da tabela x>` com os nomes reais do projeto. Aqui está a versão revisada:
+
+---
+
 #### 3. Configure os arquivos:
+
+##### 📝 Passo 0: Ajuste inicial do banco (`init.sql`)
+
+Antes de configurar os arquivos do Docker e da aplicação, você precisa **personalizar o script SQL de inicialização**:
+
+1. Abra o arquivo `init.sql` localizado em **`core/db/init.sql`**:
+
+```bash
+cd core/db
+sudo nano init.sql
+```
+
+2. No arquivo, você verá **placeholders** como `<adicione o nome da tabela de dispositivos>`, `<adicione o nome da tabela de usuarios>` e `<adicione o nome da tabela de historico>`.
+
+3. Substitua cada placeholder pelo **nome real da tabela** que deseja usar no seu projeto. Exemplo:
+
+```sql
+<adicione o nome da tabela de dispositivos>   → dispositivos
+<adicione o nome da tabela de usuarios>      → usuarios
+<adicione o nome da tabela de historico>     → historico
+```
+
+4. Salve e feche o editor:
+
+* Aperte `Ctrl+O` para salvar
+* Aperte `Ctrl+X` para sair
+
+5. Volte para a raiz do projeto para continuar:
+
+```bash
+cd ../../
+```
+
+---
 
 ##### 🐳 Arquivo de configuração do Docker (`docker-compose.yml`):
 
 1. Abra o arquivo na **raiz do projeto**:
 
 ```bash
-cd /caminho/da/raiz/do/projeto
 sudo nano docker-compose.yml
 ```
 
@@ -113,18 +150,23 @@ sudo nano config.yaml
 
 2. Configure:
 
-* Conexão com o banco de dados e com a webcam
+* Conexão com o banco de dados
+* Conexão com a webcam
+* Outros parâmetros necessários
 
 3. Para salvar e fechar:
 
 * Aperte `Ctrl+O` para salvar as modificações
 * Aperte `Ctrl+X` para fechar o editor e voltar ao terminal
 
-* Depois volte para a raiz para continuar a instalação
+4. Depois volte para a raiz para continuar a instalação:
 
 ```bash
-cd ..
+cd ../..
 ```
+
+---
+
 
 #### 4. Execute o script de instalação:
 
