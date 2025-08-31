@@ -1,6 +1,8 @@
 from typing import Any, AsyncGenerator
 from core.commands.result import *
 from core.utils.api_utils import ApiUtils
+from models import historic_model
+from models.historic_model import HistoricModel
 from models.login_model import LoginModel
 from models.perfil_model import PerfilModel
 from models.user_model import UserModel
@@ -53,8 +55,29 @@ class ApiController:
         yield Running("Iniciando registro do usuario no banco de dados ...")
 
         db_result = await self.api_repository.insert_user_table(user_data)
+
         if db_result.is_failure:
             yield Failure("erro ao registrar o usuario ...", details=db_result.value)
+            return
+
+        db_result_his = await self.api_repository.find_user(admin_key_access)
+
+        if db_result_his.is_failure:
+            yield Failure(
+                "Erro ao registrar o historico ...", details=db_result_his.value
+            )
+            return
+
+        admin_data_dict = dict(db_result_his.value)
+
+        historic_model = HistoricModel(**admin_data_dict)
+
+        result_his = await self.register_historic_from_model(
+            historic_model, f"registrou o novo usuario {user_data.alias} !"
+        )
+
+        if result_his.is_failure:
+            yield Failure("Erro ao registrar o historico ...", details=result_his.value)
             return
 
         yield Success("Usuario registrado com sucesso ...", details=db_result.value)
@@ -154,7 +177,27 @@ class ApiController:
 
         result = await self.api_repository.update_user_table(user_data, new_data)
 
+        print(result)
+
         if result.is_failure:
             return Failure("Erro ao atualizar usuario ...", details=result.value)
 
         return Success(None, log="Usuario atualizado com sucesso ...")
+
+    async def register_historic(self, historic_data: HistoricModel) -> Result[any, str]:
+        result = await self.api_repository.insert_historic_table(historic_data)
+
+        if result.is_failure:
+            return Failure(
+                "Erro ao registrar historico", details=result.value, error=True
+            )
+
+        return Success(result.value, log="Historico registrado com sucesso")
+
+    async def register_historic_from_model(self, model: HistoricModel, action: str):
+
+        model.set_log(f"Usuario {model.alias} {action}!")
+
+        result_his = await self.register_historic(model)
+
+        return result_his

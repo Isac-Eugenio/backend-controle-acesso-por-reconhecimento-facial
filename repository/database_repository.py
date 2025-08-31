@@ -81,6 +81,7 @@ class DatabaseRepository:
     ) -> Result[Union[record, List[record], int], str]:
         query.update(new_query)
         result = await self.command.execute_query(query=query)
+
         if result.is_success:
             return Success(result.value, log="Update executado com sucesso", details="")
         else:

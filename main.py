@@ -13,7 +13,9 @@ from core.commands.stream_command import StreamCommand
 from core.config.app_config import CameraConfig
 from models.device_model import DeviceModel
 from models.face_model import FaceModel
+from models.historic_model import HistoricModel
 from models.login_model import LoginModel
+from models.perfil_model import PerfilModel
 from models.stream_response_model import StreamResponse
 from models.user_model import UserModel
 from repository.api_repository import ApiRepository
@@ -64,6 +66,24 @@ async def login(request: Request):
             data=data_dict,
             code=200,
         )
+
+        historic_model = HistoricModel(**data_dict)
+
+        result_his = await api.register_historic_from_model(
+            historic_model, "logou no sistema !"
+        )
+
+        print(result_his)
+
+        if result_his.is_failure:
+            response = Response(
+                log="Erro ao realizar login ..",
+                details=result_his.details,
+                error=result_his.value,
+                code=500,
+            )
+            return response.json()
+
         return response.json()
 
     if result.is_failure:
@@ -80,6 +100,39 @@ async def login(request: Request):
         return response.json()
 
 
+@app.post("/logout")
+async def logout(request: Request):
+    form = await request.json()
+
+    perfil = PerfilModel(**form)
+
+    perfil_dict = perfil.model_dump()
+
+    historic_model = HistoricModel(**perfil_dict)
+
+    historic_model.set_log(f"Usuario {perfil.alias} deslogou no sistema !")
+
+    result_his = await api.register_historic_from_model(
+        historic_model, "deslogou no sistema !"
+    )
+
+    if result_his.is_failure:
+        response = Response(
+            log="Erro ao registrar logout..",
+            details=result_his.details,
+            error=result_his.value,
+            code=500,
+        )
+        return response.json()
+
+    response = Response(
+        log="logout bem sucedido ...",
+        details=result_his.details,
+        code=200,
+    )
+    return response.json()
+
+
 @app.post("/perfis")
 async def table_perfil(request: Request):
     form = await request.json()
@@ -92,16 +145,31 @@ async def table_perfil(request: Request):
 
     if auth.value:
         result = await api.get_user_table()
+        user_login = await api.login(form)
 
         if result.is_failure:
             response = Response(code=500, log=result.value, details=result.details)
+            return response.json()
+
+        perfil_auth_dict = user_login.value.model_dump()
+
+        historic_model = HistoricModel(**perfil_auth_dict)
+
+        result_his = await api.register_historic_from_model(
+            historic_model, "consultou a tabela de usuarios"
+        )
+
+        if result_his.is_failure:
+            response = Response(
+                code=500, log=result_his.value, details=result_his.details
+            )
             return response.json()
 
         response = Response(code=200, data=result.value, log=result.log)
         return response.json()
 
     if auth.is_failure:
-        response = Response(code=500, log=auth.value, details=auth.details)
+        response = Response(code=403, log=auth.log, details=auth.details)
         return response.json()
 
     response = Response(code=401, log="Acesso Negado ...", details=auth.log)
@@ -142,6 +210,16 @@ async def find_user(request: Request):
         response = Response(code=500, log=result.value, details=result.details)
         return response.json()
 
+    historic_model = HistoricModel(**admin_data)
+
+    result_his = await api.register_historic_from_model(
+        historic_model, f"consultou dados do usuario {result.value.alias} !"
+    )
+
+    if result_his.is_failure:
+        response = Response(code=500, log=result_his.value, details=result_his.details)
+        return response.json()
+
     response = Response(code=200, data=result.value, log=result.log)
     return response.json()
 
@@ -161,6 +239,16 @@ async def delete_user(request: Request):
     if result.is_failure:
         response = Response(code=500, log=result.value, details=result.details)
         return response.json()
+    
+    historic_model = HistoricModel(**admin_data)
+
+    result_his = await api.register_historic_from_model(
+        historic_model, f"deletou o usuario {user_data.get('alias', '')} !"
+    )
+    
+    if result_his.is_failure:
+        response = Response(code=500, log=result_his.value, details=result_his.details)
+        return response.json()
 
     response = Response(code=200, data=result.value, log=result.log)
     return response.json()
@@ -173,11 +261,29 @@ async def update_user(request: Request):
     user_data = form.get("user", {})
     admin_data = form.get("admin", {})
     new_data = form.get("new_data", {})
-
+    
     command = AsyncCommand(lambda: api.update_user(user_data, new_data, admin_data))
 
     result = await command.execute_async()
 
+    historic_model = HistoricModel(**admin_data)
+
+    keys = list(new_data.keys())
+
+    if len(keys) == 1:
+        frase = f"o campo {keys[0]}"
+    else:
+        campos = ", ".join(keys)
+        frase = f"os campos {campos}"
+
+    result_his = await api.register_historic_from_model(
+        historic_model, f"atualizou {frase} do usuario {user_data.get('alias', '')} !"
+    )
+
+    if result_his.is_failure:
+        response = Response(code=500, log=result_his.value, details=result_his.details)
+        return response.json()
+    
     if result.is_failure:
         response = Response(code=500, log=result.value, details=result.details)
         return response.json()
@@ -204,6 +310,18 @@ async def open_door(request: Request):
             code=status_code,
             log=result.log,
         )
+        return response.json()
+    
+    historic_dict = dict(result.value) | device_model.model_dump_all()
+
+    historic_model = HistoricModel(**historic_dict)
+
+    result_his = await api.register_historic_from_model(
+        historic_model, f" entrou em {device_model.local} !"
+    )
+
+    if result_his.is_failure:
+        response = Response(code=500, log=result_his.value, details=result_his.details)
         return response.json()
 
     # caso de sucesso

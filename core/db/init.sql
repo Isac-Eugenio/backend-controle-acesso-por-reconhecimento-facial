@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS `historico` (
     `nome` VARCHAR(100) NOT NULL,
     `alias` VARCHAR(11) NOT NULL,
     `id` CHAR(8), 
-    `cpf` VARCHAR(14) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `matricula` VARCHAR(255),
     `permission_level` ENUM('discente', 'docente', 'administrador') NOT NULL DEFAULT 'discente',  
@@ -38,7 +37,6 @@ CREATE TABLE IF NOT EXISTS `historico` (
     KEY `mac` (`mac`),
     KEY `local` (`local`),
     KEY `email` (`email`),
-    KEY `cpf` (`cpf`),
     CONSTRAINT `historico_ibfk_1` FOREIGN KEY (`mac`) REFERENCES `dispositivos` (`mac`) ON DELETE SET NULL,
     CONSTRAINT `historico_ibfk_2` FOREIGN KEY (`local`) REFERENCES `dispositivos` (`local`) ON DELETE SET NULL,
     CONSTRAINT `historico_ibfk_3` FOREIGN KEY (`id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
@@ -48,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `historico` (
     )
 ) ENGINE = InnoDB;
 
--- Gatilho de atualização com verificação de senha
 DELIMITER //
 CREATE TRIGGER before_update_usuarios
 BEFORE UPDATE ON usuarios
@@ -78,6 +75,6 @@ INSERT INTO dispositivos (mac, local)
 VALUES ('00:14:22:01:23:45', 'Laboratorio 1');
 
 -- Registro no histórico
-INSERT INTO historico (cpf, nome, alias, email, matricula, permission_level, mac, ip, local, trust, data_acesso, horario_acesso, id, log) 
-SELECT cpf, nome, alias, email, matricula, permission_level, '00:14:22:01:23:45', '192.168.0.1', 'Laboratorio 1', 100, CURRENT_DATE, CURRENT_TIME, id, 'Apenas para debug esta row !' 
-FROM usuarios WHERE cpf = '000.000.000-00';
+INSERT INTO historico (nome, alias, email, matricula, permission_level, mac, ip, local, trust, data_acesso, horario_acesso, id, log) 
+SELECT nome, alias, email, matricula, permission_level, '00:14:22:01:23:45', '192.168.0.1', 'Laboratorio 1', 100, CURRENT_DATE, CURRENT_TIME, id, 'Apenas para debug esta row !' 
+FROM usuarios WHERE id = '00000001';

@@ -6,6 +6,7 @@ from core.config.app_config import DatabaseTables
 from core.utils.api_utils import ApiUtils
 from models.device_model import DeviceModel
 from models.face_model import FaceModel
+from models.historic_model import HistoricModel
 from models.login_model import LoginModel
 from models.perfil_model import PerfilModel
 from models.query_model import QueryModel
@@ -63,7 +64,7 @@ class ApiRepository:
         new_query = QueryModel(table=DatabaseTables.perfis, values=new_user_data_dict)
 
         result = await self.db.update(query=query, new_query=new_query)
-
+        
         if result.is_failure:
             return Failure("Erro ao atualizar usuário", details=result.value)
 
@@ -86,6 +87,25 @@ class ApiRepository:
             return Failure("Erro ao deletar usuário", details=result.value)
 
         return Success(result.value, log="Usuário deletado com sucesso")
+
+    async def find_user(
+        self, user_data: Union[PerfilModel, UserModel, LoginModel]
+    ) -> Result[PerfilModel, str]:
+        user_data_dict = user_data.model_dump(exclude_none=True, exclude_unset=True)
+
+        if not user_data_dict:
+            return Failure("Erro ao ler dados do request")
+
+        query = QueryModel(table=DatabaseTables.perfis, values=user_data_dict)
+
+        result = await self.db.select_one(query)
+
+        if result.is_failure:
+            return Failure("Erro ao encontrar usuário", details=result.value)
+
+        if result.value is None:
+            return Failure("Usuário não encontrado", log=result.log)
+        return Success(_value=result.value, log="Usuário encontrado com sucesso")
 
     async def user_is_admin(self, user_data: UserModel) -> Result[bool, str]:
 
@@ -112,25 +132,6 @@ class ApiRepository:
             log="Usuario não é um administrador",
         )
 
-    async def find_user(
-        self, user_data: Union[PerfilModel, UserModel, LoginModel]
-    ) -> Result[PerfilModel, str]:
-        user_data_dict = user_data.model_dump(exclude_none=True, exclude_unset=True)
-
-        if not user_data_dict:
-            return Failure("Erro ao ler dados do request")
-
-        query = QueryModel(table=DatabaseTables.perfis, values=user_data_dict)
-
-        result = await self.db.select_one(query)
-
-        if result.is_failure:
-            return Failure("Erro ao encontrar usuário", details=result.value)
-
-        if result.value is None:
-            return Failure("Usuário não encontrado", log=result.log)
-        return Success(_value=result.value, log="Usuário encontrado com sucesso")
-
     async def open_door(self, device_data: DeviceModel) -> Result[any, str]:
         device_data_dict = device_data.model_dump(exclude_none=True, exclude_unset=True)
 
@@ -139,7 +140,7 @@ class ApiRepository:
                 "Erro ao ler dados do dispositivo",
                 log="Erro Device",
                 details="Dados do dispositivo inválidos",
-                error=True
+                error=True,
             )
 
         query = QueryModel(table=DatabaseTables.dispositivos, values=device_data_dict)
@@ -150,7 +151,7 @@ class ApiRepository:
                 "Erro ao buscar dispositivo",
                 log="Erro Device",
                 details=result.value,
-                error=True
+                error=True,
             )
 
         res = result.value
@@ -164,7 +165,7 @@ class ApiRepository:
                 "Erro ao encontrar perfis",
                 log="Erro Perfis",
                 details=result.value,
-                error=True
+                error=True,
             )
 
         profiles: list[PerfilModel] = []
@@ -177,7 +178,7 @@ class ApiRepository:
                     "Erro ao processar encodings do perfil",
                     log="Erro Encode",
                     details=res.value,
-                    error=True
+                    error=True,
                 )
 
             perfil.encodings = res.value if res.is_success else perfil.encodings
@@ -191,7 +192,7 @@ class ApiRepository:
                 "Erro ao obter rosto para comparação",
                 log="Erro Face",
                 details=face_to_compare.value,
-                error=True
+                error=True,
             )
 
         match = await self.face_repository.match_face_to_profiles_async(
@@ -203,16 +204,15 @@ class ApiRepository:
                     "Erro ao comparar rosto com perfis",
                     log="Erro Match",
                     details=match.value,
-                    error=True
+                    error=True,
                 )
 
-                
             return Failure(
-                    "Rosto não reconhecido",
-                    log="Acesso Negado",
-                    details=match.value,
-                    error=False
-                )
+                "Rosto não reconhecido",
+                log="Acesso Negado",
+                details=match.value,
+                error=False,
+            )
 
         # Nenhum perfil correspondeu -> apenas acesso negado, não é "erro de execução"
         if not match.value:
@@ -228,4 +228,26 @@ class ApiRepository:
             match.value.model_dump(),
             log="Porta Aberta",
             details="Rosto reconhecido e comparado com sucesso",
+        )
+
+    async def insert_historic_table(self, historic_data: HistoricModel) -> Result[any, str]:
+        historic_data_dict = historic_data.model_dump(exclude_none=True, exclude_unset=True)
+
+        query = QueryModel(table=DatabaseTables.historico, values=historic_data_dict)
+        result = await self.db.insert(query)
+
+        print(result)
+
+        if result.is_failure:
+            return Failure(
+                "Erro ao inserir histórico",
+                log="Erro Historico",
+                details=result.value,
+                error=True,
+            )
+
+        return Success(
+            result.value,
+            log="Histórico inserido com sucesso",
+            details="Registro de acesso criado",
         )

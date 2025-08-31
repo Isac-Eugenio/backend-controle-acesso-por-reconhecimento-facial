@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 from core.commands.result import *
 from models.user_model import UserModel, PermissionEnum
 
@@ -9,7 +9,7 @@ class PerfilModel(BaseModel):
     id: str
     nome: Optional[str] = Field(None, max_length=100)
     alias: Optional[str] = Field(None, max_length=11)
-    email: Optional[str] = Field(None, max_length=255)
+    email: Optional[EmailStr] = Field(None, max_length=255)
     matricula: Optional[str] = Field(None, max_length=255)
     icon_path: Optional[str] = Field(None, max_length=255)
     permission_level: PermissionEnum = PermissionEnum.DISCENTE

@@ -1,11 +1,11 @@
 from typing import Union
-from pydantic import BaseModel, model_serializer
+from pydantic import BaseModel, EmailStr, model_serializer
 from core.utils.api_utils import ApiUtils
 from models.user_model import PermissionEnum, UserModel
 
 
 class LoginModel(BaseModel):
-    email: str
+    email: EmailStr
     senha: str
     permission_level: PermissionEnum = PermissionEnum.ADMINISTRADOR
 

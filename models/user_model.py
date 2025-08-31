@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from pydantic import BaseModel, Field, PrivateAttr, field_validator
+from pydantic import BaseModel, EmailStr, Field, PrivateAttr, field_validator
 from typing import Optional, Literal, Union, List
 import numpy as np
 from core.commands.result import Result, Success, Failure
@@ -20,7 +20,7 @@ class UserModel(BaseModel):
     nome: Optional[str] = Field(None, max_length=100)
     alias: Optional[str] = Field(None, max_length=11)
     cpf: Optional[str] = Field(None, max_length=14)
-    email: Optional[str] = Field(None, max_length=255)
+    email: Optional[EmailStr] = Field(None, max_length=255)
     matricula: Optional[str] = Field(None, max_length=255)
     senha: Optional[str] = Field(None, max_length=64)
     icon_path: Optional[str] = Field(None, max_length=255)

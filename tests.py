@@ -1,4 +1,5 @@
 import asyncio
+from datetime import date, datetime
 
 from controllers.api_controller import ApiController
 from core.commands.async_command import AsyncCommand
@@ -7,6 +8,7 @@ from core.config.app_config import CameraConfig
 from core.utils.api_utils import ApiUtils
 from models.device_model import DeviceModel
 from models.face_model import FaceModel
+from models.historic_model import HistoricModel
 from models.login_model import LoginModel
 from models.user_model import UserModel
 
@@ -57,16 +59,24 @@ async def debug_async():
 
 
 async def teste_async():
-    device_dict = {"mac": "00:14:22:01:23:45", "local": "Laboratorio 1"}
+    historic_dict = {
+        "nome": "root",
+        "alias": "root",
+        "id": "00000001",
+        "email": "root.debug@gmail.com",
+        "matricula": "123456",
+    }
 
-    device = DeviceModel(**device_dict)
+    historic_model = HistoricModel(**historic_dict)
 
-    face_repository = FaceRepository(face_service, face_model)
+    historic_model.set_log("teste login")
 
-    command = AsyncCommand(lambda: api_repository.open_door(device))
-    result = await command.execute_async()
+    controller = ApiController(api_repository, face_service)
+
+    result = await controller.register_historic(historic_model)
 
     print(result)
+    
 
 
 def debug():
