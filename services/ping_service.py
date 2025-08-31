@@ -7,7 +7,21 @@ from core.commands.result import Result, Success, Failure
 
 
 class PingService:
+    """
+    Serviço para verificar a conectividade de rede com um IP específico.
+    - Executa ping usando subprocess, adaptando parâmetros para Windows ou Linux.
+    - Fornece resultado síncrono como True/False.
+    - Armazena último resultado no atributo `ping_result`.
+    """
+
     def __init__(self, ip: str):
+        """
+        Executa o comando de ping no IP fornecido.
+        Retorna:
+        - Success se o ping respondeu (código 0)
+        - Failure caso contrário ou se houver exceção
+        """
+
         self.ip = ip
         # Inicializa o Command com a função de ping
         self.command = Command(self._ping_command)
@@ -35,6 +49,8 @@ class PingService:
             return Failure(e)
 
     def ping(self) -> bool:
-        # Executa o command e atualiza self.command.result
+        """
+        Executa o ping usando _ping_command e retorna True se bem-sucedido, False caso contrário.
+        """
         result = self.command.execute()
         return result.is_success

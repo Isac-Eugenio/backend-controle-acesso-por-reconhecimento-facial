@@ -6,20 +6,29 @@ from services.face_service import FaceService
 
 
 class FaceRepository:
+    """
+    Repositório responsável por gerenciar operações relacionadas ao FaceModel e perfis.
+    Permite comparar rostos capturados com perfis cadastrados, de forma síncrona e assíncrona.
+    """
 
     def __init__(self, face_service: FaceService, face_model: FaceModel):
+        """Inicializa o repositório com FaceService e FaceModel"""
         self.face_service = face_service
         self.face_model = face_model
+
     def match_face_to_profiles(
         self,
         list_profiles: list[PerfilModel],
         face_encoding: list[float],
         tolerance: int = 60,
     ) -> Result[PerfilModel, str]:
-        list_encodings = []
-
-        for perfil in list_profiles:
-            list_encodings.append(perfil.encodings)
+        """
+        Compara um rosto com uma lista de perfis:
+        - Gera percentuais de similaridade entre o rosto e cada perfil.
+        - Retorna o perfil correspondente se ultrapassar o limite de tolerância.
+        - Caso contrário, retorna Failure indicando acesso negado.
+        """
+        list_encodings = [perfil.encodings for perfil in list_profiles]
 
         try:
             list_distance = [
@@ -39,23 +48,20 @@ class FaceRepository:
                         ),
                     )
 
-            # Nenhum perfil correspondeu -> Acesso negado (não é erro interno)
             return Failure(
                 "Acesso negado: rosto não reconhecido",
                 details="Nenhum perfil corresponde ao rosto detectado",
                 log="Acesso Negado",
-                error=False
+                error=False,
             )
 
         except Exception as e:
-            # Qualquer exceção real -> erro interno
             return Failure(
                 "Erro ao comparar rosto com perfis",
                 details=str(e),
                 log="Erro Match",
-                error=True
+                error=True,
             )
-
 
     async def match_face_to_profiles_async(
         self,
@@ -63,9 +69,8 @@ class FaceRepository:
         face_encoding: list[float],
         tolerance: int = 60,
     ) -> Result[FaceModel, str]:
-
+        """Versão assíncrona de match_face_to_profiles"""
         loop = asyncio.get_running_loop()
-
         return await loop.run_in_executor(
             None,
             lambda: self.match_face_to_profiles(
@@ -74,4 +79,5 @@ class FaceRepository:
         )
 
     def _distance_percent(self, distance: float) -> float:
+        """Converte distância entre rostos em percentual de similaridade"""
         return ((-distance) + 1) * 100

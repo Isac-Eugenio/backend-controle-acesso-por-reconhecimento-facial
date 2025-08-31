@@ -4,7 +4,7 @@ from datetime import date, datetime
 from controllers.api_controller import ApiController
 from core.commands.async_command import AsyncCommand
 from core.commands.stream_command import StreamCommand
-from core.config.app_config import CameraConfig
+from core.config.app_config import CameraConfig, DatabaseTables
 from core.utils.api_utils import ApiUtils
 from models.device_model import DeviceModel
 from models.face_model import FaceModel

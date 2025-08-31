@@ -1,20 +1,31 @@
+# -----------------------------
+# Arquivo Docker Compose para levantar um ambiente de desenvolvimento com MySQL e Adminer
+# -----------------------------
+
 services:
 
   db:
-    image: mysql
-    container_name: db_teste
+    # Serviço do banco de dados MySQL
+    image: mysql # Imagem oficial do MySQL no Docker Hub
+    container_name: db_teste # Nome do container (facilita referência)
     environment:
-      - MYSQL_ROOT_PASSWORD=@Isac1998
-      - MYSQL_DATABASE=debug
+      # Variáveis de ambiente para configurar o MySQL
+      - MYSQL_ROOT_PASSWORD=@Isac1998 # Senha do usuário root do MySQL
+      - MYSQL_DATABASE=debug # Banco de dados inicial que será criado automaticamente
     ports:
-      - 3306:3306
+      - 3306:3306 # Mapeia a porta padrão do MySQL do container (3306) para a máquina host
     volumes:
       - ./core/db:/docker-entrypoint-initdb.d
-    restart: always
+        # Mapeia scripts SQL ou arquivos de inicialização da pasta local ./core/db para o container
+        # Qualquer script .sql dentro dessa pasta será executado na inicialização do MySQL
+    restart: always # Garante que o container reinicie automaticamente se parar ou se o Docker reiniciar
 
   manager:
-    image: adminer
-    container_name: manager_db
+    # Serviço de gerenciamento visual do banco de dados
+    image: adminer # Imagem oficial do Adminer (uma alternativa leve ao phpMyAdmin)
+    container_name: manager_db # Nome do container
     ports:
       - 8050:8080
-    restart: always
+        # Mapeia a porta 8080 do container para 8050 na máquina host
+        # Acesse Adminer em http://localhost:8050
+    restart: always # Reinicia automaticamente caso o container pare

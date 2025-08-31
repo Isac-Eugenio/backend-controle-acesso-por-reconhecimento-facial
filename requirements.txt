@@ -1,15 +1,15 @@
-setuptools
-wheel
-dlib
-face-recognition
-fastapi
-opencv-python
-databases
-aiomysql
-cryptography
-uvicorn
-pyyaml
-pydantic
-bcrypt
-passlib
-pydantic[email]
+setuptools           # Ferramenta padrão para empacotar e instalar pacotes Python.
+wheel                # Cria arquivos wheel (.whl), um formato de distribuição binária de pacotes Python.
+dlib                 # Biblioteca C++ com bindings Python, usada para aprendizado de máquina e visão computacional. Necessária para face recognition.
+face-recognition     # Biblioteca para detecção e reconhecimento facial em Python, depende de dlib.
+fastapi              # Framework moderno para criar APIs RESTful assíncronas de alta performance.
+opencv-python        # Biblioteca OpenCV para processamento de imagens e vídeos.
+databases            # Biblioteca assíncrona para acesso a bancos de dados SQL.
+aiomysql             # Driver MySQL assíncrono compatível com `databases`.
+cryptography         # Biblioteca para criptografia (hashing, certificados, chaves, etc.).
+uvicorn              # Servidor ASGI rápido, usado para rodar aplicações FastAPI.
+pyyaml               # Biblioteca para ler e escrever arquivos YAML (ex.: configs).
+pydantic             # Validação de dados e parsing de modelos, usado extensivamente em FastAPI.
+bcrypt               # Algoritmo de hash seguro, geralmente usado para senhas.
+passlib              # Biblioteca de hashing de senhas, suporta bcrypt, argon2 e outros.
+pydantic[email]      # Extensão do pydantic para validação de emails.

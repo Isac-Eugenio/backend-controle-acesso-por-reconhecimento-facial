@@ -10,12 +10,27 @@ from core.utils.api_utils import ApiUtils
 
 generate_id = ApiUtils._generate_id()
 
+
 class PermissionEnum(str, Enum):
+    """
+    Enum que define os níveis de permissão de um usuário:
+    - DISCENTE: aluno ou estudante
+    - DOCENTE: professor ou instrutor
+    - ADMINISTRADOR: usuário com privilégios administrativos
+    """
+
     DISCENTE = "discente"
     DOCENTE = "docente"
     ADMINISTRADOR = "administrador"
 
+
 class UserModel(BaseModel):
+    """
+    Modelo que descreve um usuário no sistema.
+    - Pode representar discentes, docentes e administradores.
+    - Contém dados pessoais, permissões e encodings faciais para autenticação.
+    """
+
     id: str = Field(default_factory=ApiUtils._generate_id, max_length=8)
     nome: Optional[str] = Field(None, max_length=100)
     alias: Optional[str] = Field(None, max_length=11)
@@ -25,12 +40,13 @@ class UserModel(BaseModel):
     senha: Optional[str] = Field(None, max_length=64)
     icon_path: Optional[str] = Field(None, max_length=255)
 
-    permission_level: PermissionEnum =  Field(default=PermissionEnum.DISCENTE)
+    permission_level: PermissionEnum = Field(default=PermissionEnum.DISCENTE)
 
     encodings: Optional[str] = None
 
     _face_model: FaceModel = PrivateAttr(default_factory=FaceModel)
 
+    # Se senha não estiver em hash SHA256, gera o hash
     @field_validator("senha", mode="before")
     def hash_senha(cls, v):
         if v is None:
@@ -43,6 +59,7 @@ class UserModel(BaseModel):
     def senha(self):
         return self.senha
 
+    # Atualiza senha; garante SHA256
     @senha.setter
     def senha(self, value: str):
         if value is None:
@@ -55,6 +72,10 @@ class UserModel(BaseModel):
     def set_encoding(
         self, encoding: Union[str, np.ndarray, List[float]]
     ) -> Result[np.ndarray, str]:
+        """
+        Converte string/lista para np.ndarray e valida tamanho
+        Atualiza FaceModel e salva string no campo encodings
+        """
         try:
             # Converte string para np.ndarray
             if isinstance(encoding, str):
@@ -99,6 +120,8 @@ class UserModel(BaseModel):
 
     @classmethod
     def from_map(cls, data: dict) -> Result["UserModel", str]:
+        # Cria instância de UserModel a partir de dicionário
+        # Se houver encoding, seta no FaceModel
         try:
             # Cria a instância do modelo
             user = cls(
@@ -128,6 +151,8 @@ class UserModel(BaseModel):
             )
 
     def to_map(self) -> Result[dict, str]:
+        # Converte o UserModel para dict
+        # Encodings são serializados em string
         try:
             # Converte o encoding para string via FaceModel
             encoding_str = None
