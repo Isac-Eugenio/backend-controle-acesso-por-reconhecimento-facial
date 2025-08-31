@@ -14,6 +14,7 @@ Este exemplo roda na **placa ESP32-CAM Ai-Thinker** e utiliza a biblioteca [ESP3
 
 ---
 
+
 ## 📝 Observações importantes
 
 | Item | Detalhes |
