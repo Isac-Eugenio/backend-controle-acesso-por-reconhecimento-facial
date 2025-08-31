@@ -67,31 +67,56 @@ git clone https://github.com/Isac-Eugenio/backend_controle_de_acesso.git
 ```bash
 cd backend_controle_de_acesso
 ```
+Você pode reescrever essa parte do README.md assim, deixando claro o passo a passo e a relação entre os arquivos:
+
+---
 
 #### 3. Configure os arquivos:
 
-##### 🛠️ Arquivo de configuração da aplicação:
+##### 🛠️ Arquivo de configuração da aplicação (`config.yaml`):
 
-Edite o arquivo `core/config/config.yaml` com suas variáveis personalizadas:
+1. Vá até o diretório **`core/config`** e edite o arquivo de configuração:
 
 ```bash
-sudo nano core/config/config.yaml
+cd core/config
+sudo nano config.yaml
 ```
 
-Configure:
+2. Dentro dele, configure:
 
-* Conexão com o banco de dados (host, porta, usuário, senha, nome)
-* Nome do projeto, permissões de usuário, etc.
+   * Conexão com o banco de dados (`host`, `porta`, `usuário`, `senha`, `nome`)
+   * Nome do projeto, permissões de usuário, e demais variáveis de ambiente.
 
-##### 🐳 Arquivo `docker-compose.yml`:
+3. para voltar
 
-Edite o `docker-compose.yml` e **garanta que os valores (como `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`) estejam sincronizados com o `config.yaml`**:
+   * Aperte ctl+o para salvar as modificações
+   * Depois ctl+x para fechar o editor e voltar ao terminal
+---
+
+##### 🐳 Arquivo de configuração do Docker (`docker-compose.yml`):
+
+1. Volte para a **raiz do projeto**:
 
 ```bash
+cd ../..
 sudo nano docker-compose.yml
 ```
 
-> 🔁 **Atenção:** Os dados de conexão devem ser consistentes entre `config.yaml` e `docker-compose.yml` para que o backend consiga acessar o banco MySQL corretamente.
+2. Modifique as variáveis de ambiente do container MySQL:
+
+* `MYSQL_USER`
+* `MYSQL_PASSWORD`
+* `MYSQL_DATABASE`
+
+⚠️ **Importante:** Os valores definidos no `docker-compose.yml` devem estar **sincronizados** com os que você configurou no `config.yaml`.
+Isso garante que o backend consiga se conectar corretamente ao banco MySQL.
+
+---
+
+
+Show! 👍 Então podemos incluir a observação do `set -e` junto da explicação do `bash -x`. Assim o usuário sabe tanto como **debugar** (`-x`) quanto como **garantir que o script pare no erro** (`set -e`).
+
+Aqui está uma sugestão revisada para o trecho do **README.md**:
 
 ---
 
@@ -104,7 +129,33 @@ source install.sh
 
 Esse script realiza a instalação das dependências necessárias para o funcionamento do backend.
 
+⚠️ **Importante:** caso haja erros durante a instalação, verifique os arquivos em `.build` (`build_error.log` e `build.log`), onde estarão registrados os detalhes do processo.
+
+Além disso, existem duas formas de facilitar o diagnóstico:
+
+1. **Exibir cada comando antes da execução (debug):**
+
+   ```bash
+   sudo bash -x install.sh
+   ```
+
+   ou
+
+   ```bash
+   sudo bash -x build.sh
+   ```
+
+2. **Garantir que o script seja interrompido ao primeiro erro:**
+   Inclua no início do arquivo `install.sh` a linha:
+
+   ```bash
+   set -e
+   ```
+
+   Dessa forma, o script não continuará rodando em caso de falha em algum comando, evitando erros encadeados.
+
 ---
+
 
 #### 5. Inicie o servidor com o script de inicialização:
 

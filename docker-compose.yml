@@ -7,13 +7,13 @@ services:
   db:
     # Serviço do banco de dados MySQL
     image: mysql # Imagem oficial do MySQL no Docker Hub
-    container_name: db_teste # Nome do container (facilita referência)
+    container_name: <Nome para o Container do seu DB> # Nome do container (facilita referência)
     environment:
       # Variáveis de ambiente para configurar o MySQL
-      - MYSQL_ROOT_PASSWORD=@Isac1998 # Senha do usuário root do MySQL
-      - MYSQL_DATABASE=debug # Banco de dados inicial que será criado automaticamente
+      - MYSQL_ROOT_PASSWORD=<a senha do root do MySQL> # Senha do usuário root do MySQL
+      - MYSQL_DATABASE=<a nome do banco de dados> # Banco de dados inicial que será criado automaticamente
     ports:
-      - 3306:3306 # Mapeia a porta padrão do MySQL do container (3306) para a máquina host
+      - "<a porta host>:3306" # Mapeia a porta padrão do MySQL do container (3306) para a máquina host
     volumes:
       - ./core/db:/docker-entrypoint-initdb.d
         # Mapeia scripts SQL ou arquivos de inicialização da pasta local ./core/db para o container
@@ -23,9 +23,9 @@ services:
   manager:
     # Serviço de gerenciamento visual do banco de dados
     image: adminer # Imagem oficial do Adminer (uma alternativa leve ao phpMyAdmin)
-    container_name: manager_db # Nome do container
+    container_name: <Nome para o container do gerenciador do DB> # Nome do container
     ports:
-      - 8050:8080
-        # Mapeia a porta 8080 do container para 8050 na máquina host
-        # Acesse Adminer em http://localhost:8050
+      - "<a porta host>:8080" # Mapeia a porta do container para a porta escolhida na máquina host
+        # Acesse Adminer em http://localhost:<porta escolhida>
+       
     restart: always # Reinicia automaticamente caso o container pare
