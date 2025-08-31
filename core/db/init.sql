@@ -2,7 +2,7 @@
 -- Tabela de dispositivos
 -- Armazena informações sobre os dispositivos (ex.: câmeras, portas)
 -- =========================================================
-CREATE TABLE IF NOT EXISTS `dispositivos` (
+CREATE TABLE IF NOT EXISTS `<adicione o nome da tabela de dispositivos>` (
     `mac` VARCHAR(20) NOT NULL,         -- Endereço MAC do dispositivo
     `local` VARCHAR(255) NOT NULL,      -- Local físico do dispositivo
     PRIMARY KEY (`mac`),                -- MAC como chave primária
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `dispositivos` (
 -- Tabela de usuários
 -- Armazena informações dos usuários do sistema
 -- =========================================================
-CREATE TABLE IF NOT EXISTS `usuarios` (
+CREATE TABLE IF NOT EXISTS `<adicione o nome da tabela de usuarios>` (
     `id` CHAR(8) NOT NULL UNIQUE,       -- Identificador único do usuário
     `nome` VARCHAR(100) NOT NULL,       -- Nome completo
     `alias` VARCHAR(11) NOT NULL,       -- Nome de usuário / apelido
@@ -32,16 +32,16 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 -- Tabela de histórico
 -- Armazena registros de acesso e ações dos usuários
 -- =========================================================
-CREATE TABLE IF NOT EXISTS `historico` (
+CREATE TABLE IF NOT EXISTS `<adicione o nome da tabela de historico>` (
     `nome` VARCHAR(100) NOT NULL,        -- Nome do usuário
     `alias` VARCHAR(11) NOT NULL,        -- Alias do usuário
-    `id` CHAR(8),                        -- ID do usuário (FK para usuarios)
-    `email` VARCHAR(255) NOT NULL,       -- E-mail do usuário (FK para usuarios)
+    `id` CHAR(8),                        -- ID do usuário (FK para tabela de usuarios)
+    `email` VARCHAR(255) NOT NULL,       -- E-mail do usuário (FK para tabela de usuarios)
     `matricula` VARCHAR(255),            -- Matrícula
     `permission_level` ENUM('discente', 'docente', 'administrador') NOT NULL DEFAULT 'discente', -- Nível de permissão
-    `mac` VARCHAR(20) DEFAULT NULL,      -- MAC do dispositivo usado (FK para dispositivos)
+    `mac` VARCHAR(20) DEFAULT NULL,      -- MAC do dispositivo usado (FK para tabela de dispositivos)
     `ip` VARCHAR(15) NOT NULL,           -- Endereço IP do acesso
-    `local` VARCHAR(100) DEFAULT NULL,   -- Local do dispositivo usado (FK para dispositivos)
+    `local` VARCHAR(100) DEFAULT NULL,   -- Local do dispositivo usado (FK para tabela de dispositivos)
     `trust` INT NOT NULL CHECK (`trust` BETWEEN 0 AND 100), -- Nível de confiança da ação
     `data_acesso` DATE,                  -- Data do acesso
     `horario_acesso` TIME,               -- Horário do acesso
@@ -51,10 +51,10 @@ CREATE TABLE IF NOT EXISTS `historico` (
     KEY `email` (`email`),
 
     -- Relações com dispositivos e usuários
-    CONSTRAINT `historico_ibfk_1` FOREIGN KEY (`mac`) REFERENCES `dispositivos` (`mac`) ON DELETE SET NULL,
-    CONSTRAINT `historico_ibfk_2` FOREIGN KEY (`local`) REFERENCES `dispositivos` (`local`) ON DELETE SET NULL,
-    CONSTRAINT `historico_ibfk_3` FOREIGN KEY (`id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `historico_ibfk_4` FOREIGN KEY (`email`) REFERENCES `usuarios` (`email`) ON DELETE CASCADE,
+    CONSTRAINT `historico_ibfk_1` FOREIGN KEY (`mac`) REFERENCES `<adicione o nome da tabela de dispositivos>` (`mac`) ON DELETE SET NULL,
+    CONSTRAINT `historico_ibfk_2` FOREIGN KEY (`local`) REFERENCES `<adicione o nome da tabela de dispositivos>` (`local`) ON DELETE SET NULL,
+    CONSTRAINT `historico_ibfk_3` FOREIGN KEY (`id`) REFERENCES `<adicione o nome da tabela de usuarios>` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `historico_ibfk_4` FOREIGN KEY (`email`) REFERENCES `<adicione o nome da tabela de usuarios>` (`email`) ON DELETE CASCADE,
 
     -- Validação do IP
     CONSTRAINT `historico_chk_3` CHECK (
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `historico` (
 -- =========================================================
 DELIMITER //
 CREATE TRIGGER before_update_usuarios
-BEFORE UPDATE ON usuarios
+BEFORE UPDATE ON `<adicione o nome da tabela de usuarios>`
 FOR EACH ROW
 BEGIN
     IF NEW.permission_level = 'administrador' THEN
@@ -86,7 +86,11 @@ END;
 //
 DELIMITER ;
 
-
+-- =========================================================
 -- Inserir usuário administrador root (com ID manual)
-INSERT INTO usuarios (cpf, nome, alias, email, matricula, senha, permission_level, encodings, id, icon_path) 
-VALUES ('000.000.000-00', 'root', 'root', 'root.debug@gmail.com', '123456', '@Isac1998', 'administrador', '0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0', '00000001', '');
+
+-- TODO: retirar após adicionar o primeiro usuario é apenas desmonstração
+
+-- =========================================================
+INSERT INTO `<adicione o nome da tabela de usuarios>` (cpf, nome, alias, email, matricula, senha, permission_level, encodings, id, icon_path) 
+VALUES ('000.000.000-00', 'root', 'root', '<adicione um email>', '123456', '<adicione uma senha>', 'administrador', '0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0', '00000001', '');

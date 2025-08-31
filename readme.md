@@ -70,8 +70,37 @@ cd backend_controle_de_acesso
 Você pode reescrever essa parte do README.md assim, deixando claro o passo a passo e a relação entre os arquivos:
 
 ---
+Ah! Entendi. Você quer **inverter a ordem das instruções** para que primeiro o desenvolvedor edite o `docker-compose.yml` na raiz do projeto e depois vá para o `config.yaml` em `core/config`.
+
+Aqui está a versão revisada e reorganizada do seu trecho do README.md:
+
+---
 
 #### 3. Configure os arquivos:
+
+##### 🐳 Arquivo de configuração do Docker (`docker-compose.yml`):
+
+1. Abra o arquivo na **raiz do projeto**:
+
+```bash
+cd /caminho/da/raiz/do/projeto
+sudo nano docker-compose.yml
+```
+
+2. Modifique as variáveis de ambiente do container MySQL:
+
+* `MYSQL_USER`
+* `MYSQL_PASSWORD`
+* `MYSQL_DATABASE`
+
+⚠️ **Importante:** Os valores definidos no `docker-compose.yml` devem estar **sincronizados** com os que você configurará no `config.yaml`. Isso garante que o backend consiga se conectar corretamente ao banco MySQL.
+
+3. Para salvar e fechar o editor:
+
+* Aperte `Ctrl+O` para salvar as modificações
+* Aperte `Ctrl+X` para fechar o editor e voltar ao terminal
+
+---
 
 ##### 🛠️ Arquivo de configuração da aplicação (`config.yaml`):
 
@@ -82,43 +111,20 @@ cd core/config
 sudo nano config.yaml
 ```
 
-2. Dentro dele, configure:
+2. Configure:
 
-   * Conexão com o banco de dados (`host`, `porta`, `usuário`, `senha`, `nome`)
-   * Nome do projeto, permissões de usuário, e demais variáveis de ambiente.
+* Conexão com o banco de dados e com a webcam
 
-3. para voltar
+3. Para salvar e fechar:
 
-   * Aperte ctl+o para salvar as modificações
-   * Depois ctl+x para fechar o editor e voltar ao terminal
----
+* Aperte `Ctrl+O` para salvar as modificações
+* Aperte `Ctrl+X` para fechar o editor e voltar ao terminal
 
-##### 🐳 Arquivo de configuração do Docker (`docker-compose.yml`):
-
-1. Volte para a **raiz do projeto**:
+* Depois volte para a raiz para continuar a instalação
 
 ```bash
-cd ../..
-sudo nano docker-compose.yml
+cd ..
 ```
-
-2. Modifique as variáveis de ambiente do container MySQL:
-
-* `MYSQL_USER`
-* `MYSQL_PASSWORD`
-* `MYSQL_DATABASE`
-
-⚠️ **Importante:** Os valores definidos no `docker-compose.yml` devem estar **sincronizados** com os que você configurou no `config.yaml`.
-Isso garante que o backend consiga se conectar corretamente ao banco MySQL.
-
----
-
-
-Show! 👍 Então podemos incluir a observação do `set -e` junto da explicação do `bash -x`. Assim o usuário sabe tanto como **debugar** (`-x`) quanto como **garantir que o script pare no erro** (`set -e`).
-
-Aqui está uma sugestão revisada para o trecho do **README.md**:
-
----
 
 #### 4. Execute o script de instalação:
 
