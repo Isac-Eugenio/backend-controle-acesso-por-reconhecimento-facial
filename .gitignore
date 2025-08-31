@@ -2,4 +2,4 @@
 
 .build/*.log
 
-tests.py
+./tests.py
